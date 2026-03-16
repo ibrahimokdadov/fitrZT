@@ -99,9 +99,289 @@ function toggleLang() {
   render();
 }
 
-// Stub renderers — filled in subsequent tasks
-function renderStep3() { return '<section class="step-card step-purple"><p>Step 3</p></section>'; }
-function renderResult() { return '<section class="step-card step-gold"><p>Result</p></section>'; }
+function renderStep3() {
+  const assigned = totalAssigned();
+  const diff = assigned - state.familySize;
+  const isSingle = state.familySize === 1;
+
+  const rows = state.foodRows.map((row, i) => {
+    const food = row.isCustom ? null : FOODS[row.foodKey];
+    const name = row.isCustom
+      ? row.name
+      : (state.lang === 'ar' ? food.ar : food.en);
+    const emoji = row.isCustom ? '🍽' : food.emoji;
+    const kg = effectiveKg(row);
+    const subtotal = round2(kg * row.persons);
+    const remaining = state.familySize - assigned + row.persons;
+    const plusDisabled = row.persons >= remaining;
+    const minusDisabled = row.persons <= 0;
+
+    const kgDisplay = row.isCustom
+      ? `<input class="kg-inline-input" type="number" step="0.01" min="0.01"
+               value="${row.countryKg}"
+               onblur="onCustomKgBlur(${i}, this.value)"
+               aria-label="kg per person" /> ${state.lang==='ar'?'كغ':'kg'}`
+      : `${fmt(kg.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}`;
+
+    return `
+      <div class="food-row">
+        <div class="food-row-info">
+          <span class="food-emoji">${emoji}</span>
+          <span class="food-name">${name}</span>
+          <span class="food-kg">${kgDisplay}</span>
+        </div>
+        <div class="food-row-controls">
+          ${isSingle ? '' : `
+            <button class="counter-btn sm" onclick="changeRowPersons(${i},-1)"
+                    ${minusDisabled?'disabled':''}
+                    aria-label="${t('removeFoodRow')}">−</button>
+            <span class="row-persons">${fmt(row.persons)}</span>
+            <button class="counter-btn sm" onclick="changeRowPersons(${i},1)"
+                    ${plusDisabled?'disabled':''}
+                    aria-label="Add person">+</button>
+          `}
+          <span class="row-subtotal">${fmt(subtotal.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</span>
+          <button class="remove-row-btn" onclick="removeRow(${i})"
+                  aria-label="${t('removeFoodRow')}">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  const warningHtml = diff !== 0 ? `
+    <div class="assign-warning">
+      ${diff < 0
+        ? t('assignWarningUnder', { n: fmt(Math.abs(diff)), person: personLabel(Math.abs(diff)) })
+        : t('assignWarningOver',  { n: fmt(diff),           person: personLabel(diff) })}
+    </div>` : '';
+
+  const addBtnDisabled = assigned >= state.familySize || isSingle;
+
+  return `
+    <section class="step-card step-purple">
+      <div class="step-heading">
+        <div class="step-number">3</div>
+        <span class="step-label">${t('step3Label')}</span>
+      </div>
+      ${rows}
+      ${warningHtml}
+      <button class="add-food-btn" onclick="toggleFoodPanel()"
+              ${addBtnDisabled ? 'disabled' : ''}>
+        ${t('addFoodBtn')}
+      </button>
+      ${state.foodPanelOpen ? renderFoodPanel() : ''}
+    </section>`;
+}
+
+function changeRowPersons(i, delta) {
+  const row = state.foodRows[i];
+  const assigned = totalAssigned();
+  const next = row.persons + delta;
+  if (next < 0) return;
+  if (delta > 0 && assigned >= state.familySize) return;
+  row.persons = next;
+  state.rowsModified = true;
+  render();
+}
+
+function removeRow(i) {
+  state.foodRows.splice(i, 1);
+  state.rowsModified = true;
+  // When all rows deleted, open food panel automatically.
+  // Also handles isSingle edge case: panel auto-opens so user can re-add food.
+  if (state.foodRows.length === 0) state.foodPanelOpen = true;
+  render();
+}
+
+function onCustomKgBlur(i, raw) {
+  const v = parseFloat(raw);
+  if (!isNaN(v) && v > 0) {
+    state.foodRows[i].countryKg = v;
+    render();
+  }
+}
+
+// ── Task 10: Food picker panel ──────────────────────────────────────────────
+function toggleFoodPanel() {
+  state.foodPanelOpen = !state.foodPanelOpen;
+  render();
+}
+
+function renderFoodPanel() {
+  const foodKeys = Object.keys(FOODS);
+  const grid = foodKeys.map(key => {
+    const food = FOODS[key];
+    const name = state.lang === 'ar' ? food.ar : food.en;
+    return `
+      <button class="food-picker-item" onclick="addBuiltinFood('${key}')">
+        <span>${food.emoji}</span>
+        <span>${name}</span>
+      </button>`;
+  }).join('');
+
+  return `
+    <div class="food-panel">
+      <div class="food-panel-header">
+        <span></span>
+        <button class="close-panel-btn" onclick="toggleFoodPanel()"
+                aria-label="${t('closePanelBtn')}">✕</button>
+      </div>
+      <div class="food-picker-grid">${grid}</div>
+      <div class="custom-food-form">
+        <p class="custom-food-title">${t('customFoodTitle')}</p>
+        <input id="customFoodName" type="text" class="custom-input"
+               placeholder="${t('customFoodNamePlaceholder')}" />
+        <span id="customFoodNameErr" class="field-error" hidden></span>
+        <input id="customFoodKg" type="number" step="0.01" min="0.01" class="custom-input"
+               placeholder="${t('customFoodKgPlaceholder')}" />
+        <span id="customFoodKgErr" class="field-error" hidden></span>
+        <button class="add-custom-btn" onclick="addCustomFood()">
+          ${t('customFoodConfirm')}
+        </button>
+      </div>
+    </div>`;
+}
+
+function addBuiltinFood(key) {
+  const food = FOODS[key];
+  state.foodRows.push({
+    foodKey: key,
+    name: '',
+    isCustom: false,
+    countryKg: food.majorityKg,
+    persons: 0,
+  });
+  state.foodPanelOpen = false;
+  state.rowsModified = true;
+  render();
+}
+
+function addCustomFood() {
+  const nameEl = document.getElementById('customFoodName');
+  const kgEl   = document.getElementById('customFoodKg');
+  const nameErr = document.getElementById('customFoodNameErr');
+  const kgErr   = document.getElementById('customFoodKgErr');
+  let valid = true;
+
+  nameErr.hidden = true;
+  kgErr.hidden   = true;
+
+  if (!nameEl.value.trim()) {
+    nameErr.textContent = t('customFoodErrorName');
+    nameErr.hidden = false;
+    valid = false;
+  }
+  const kg = parseFloat(kgEl.value);
+  if (isNaN(kg) || kg <= 0) {
+    kgErr.textContent = t('customFoodErrorKg');
+    kgErr.hidden = false;
+    valid = false;
+  }
+  if (!valid) return;
+
+  state.foodRows.push({
+    foodKey: null,
+    name: nameEl.value.trim(),
+    isCustom: true,
+    countryKg: kg,
+    persons: 0,
+  });
+  state.foodPanelOpen = false;
+  state.rowsModified = true;
+  render();
+}
+
+// ── Task 11: Scholar chips + result + copy + reset ──────────────────────────
+function renderResult() {
+  const chips = SCHOLAR_PRESETS.map(p => `
+    <button class="chip ${state.scholarChip === p.key ? 'chip-active' : ''}"
+            onclick="selectChip('${p.key}')">
+      ${state.lang === 'ar' ? p.ar : p.en}
+    </button>`).join('');
+
+  const lines = state.foodRows.map(row => {
+    const food = row.isCustom ? null : FOODS[row.foodKey];
+    const name = row.isCustom
+      ? row.name
+      : (state.lang === 'ar' ? food.ar : food.en);
+    const kg = round2(effectiveKg(row) * row.persons);
+    return `<div class="result-line">
+      ${t('resultLine', { kg: fmt(kg.toFixed(2)), food: name, n: fmt(row.persons), person: personLabel(row.persons) })}
+    </div>`;
+  }).join('');
+
+  const total = round2(state.foodRows.reduce((s, r) => s + effectiveKg(r) * r.persons, 0));
+
+  // copyText is built on-demand in copyResult() — not needed at render time
+
+  return `
+    <section class="step-card step-gold">
+      <div class="result-total-label">${t('resultTitle')}</div>
+      <div class="result-total-kg">${fmt(total.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</div>
+      ${lines}
+      <div class="override-label">${t('overrideLabel')}</div>
+      <div class="chip-row">${chips}</div>
+      <div class="result-actions">
+        <button class="result-btn copy-btn" id="copyBtn" onclick="copyResult()">
+          ${t('copyBtn')}
+        </button>
+        <button class="result-btn reset-btn" onclick="resetAll()">
+          ${t('resetBtn')}
+        </button>
+      </div>
+    </section>`;
+}
+
+function selectChip(key) {
+  state.scholarChip = key;
+  render();
+}
+
+function buildCopyText() {
+  const countryName = state.lang === 'ar' ? state.country.ar : state.country.en;
+  const lines = state.foodRows.map(row => {
+    const food = row.isCustom ? null : FOODS[row.foodKey];
+    const name = row.isCustom ? row.name : (state.lang==='ar' ? food.ar : food.en);
+    const kg = round2(effectiveKg(row) * row.persons);
+    const nStr = fmt(row.persons);
+    const person = personLabel(row.persons);
+    return state.lang === 'ar'
+      ? `${name}: ${fmt(kg.toFixed(2))} كغ (${nStr} ${person})`
+      : `${name}: ${kg.toFixed(2)} kg (${nStr} ${person})`;
+  }).join('\n');
+
+  const total = round2(state.foodRows.reduce((s,r) => s + effectiveKg(r)*r.persons, 0));
+  const totalStr = state.lang==='ar'
+    ? `المجموع: ${fmt(total.toFixed(2))} كغ`
+    : `Total: ${total.toFixed(2)} kg`;
+
+  const header = state.lang==='ar'
+    ? `زكاة الفطر — ${countryName}\n${fmt(state.familySize)} ${personLabel(state.familySize)}`
+    : `Zakat al-Fitr — ${countryName}\n${state.familySize} ${personLabel(state.familySize)}`;
+
+  return `${header}\n${lines}\n${totalStr}`;
+}
+
+async function copyResult() {
+  const text = buildCopyText();
+  const btn = document.getElementById('copyBtn');
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = t('copiedBtn');
+    setTimeout(() => { btn.textContent = t('copyBtn'); }, 2000);
+  } catch {
+    alert(`${t('copyFallbackAlert')}\n\n${text}`);
+  }
+}
+
+function resetAll() {
+  state.country = null;
+  state.familySize = 1;
+  state.foodRows = [];
+  state.scholarChip = 'country';
+  state.foodPanelOpen = false;
+  state.rowsModified = false;
+  render();
+}
 
 function renderStep2() {
   const n = state.familySize;
