@@ -24,6 +24,7 @@ function escHtml(s) {
 // ── State ──────────────────────────────────────────────────────────────────
 const state = {
   lang: (navigator.language || '').startsWith('ar') ? 'ar' : 'en',
+  numericScript: 'indian', // 'indian' (٠١٢٣…) | 'english' (0123…); only applies in AR mode
   country: null,       // COUNTRIES entry or null
   familySize: 1,
   foodRows: [],        // [{ foodKey, name, isCustom, countryKg, persons }]
@@ -50,7 +51,7 @@ function personLabel(n) {
 // IMPORTANT: always call fmt(value.toFixed(2)) for kg amounts at call sites,
 // not fmt(value), to preserve trailing zeros (e.g. 2.30 not 2.3).
 function fmt(n) {
-  if (state.lang === 'ar') {
+  if (state.lang === 'ar' && state.numericScript === 'indian') {
     return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
   }
   return String(n);
@@ -101,9 +102,12 @@ function render() {
         <h1 class="app-title">${t('appTitle')}</h1>
         <p class="app-subtitle">${t('appSubtitle')}</p>
       </div>
-      <button class="lang-btn" onclick="toggleLang()" aria-label="Switch language">
-        ${t('langToggle')}
-      </button>
+      <div class="header-btns">
+        ${state.lang === 'ar' ? `<button class="num-script-btn${state.numericScript === 'english' ? ' num-script-active' : ''}" onclick="toggleNumericScript()" title="تبديل صيغة الأرقام">${state.numericScript === 'indian' ? '123' : '١٢٣'}</button>` : ''}
+        <button class="lang-btn" onclick="toggleLang()" aria-label="Switch language">
+          ${t('langToggle')}
+        </button>
+      </div>
     </header>
 
     <main>
@@ -117,6 +121,11 @@ function render() {
 
 function toggleLang() {
   state.lang = state.lang === 'en' ? 'ar' : 'en';
+  render();
+}
+
+function toggleNumericScript() {
+  state.numericScript = state.numericScript === 'indian' ? 'english' : 'indian';
   render();
 }
 
@@ -175,7 +184,7 @@ function renderStep3() {
         : t('assignWarningOver',  { n: fmt(diff),           person: personLabel(diff) })}
     </div>` : '';
 
-  const addBtnDisabled = assigned >= state.familySize || isSingle;
+  const addBtnDisabled = isSingle && state.foodRows.length > 0;
 
   return `
     <section class="step-card step-purple">
