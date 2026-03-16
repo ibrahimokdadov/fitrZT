@@ -318,7 +318,7 @@ function renderResult() {
       ${state.lang === 'ar' ? p.ar : p.en}
     </button>`).join('');
 
-  const lines = state.foodRows.map(row => {
+  const lines = state.foodRows.filter(r => r.persons > 0).map(row => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
     const name = row.isCustom
       ? escHtml(row.name)
@@ -414,13 +414,13 @@ function renderStep2() {
       <div class="counter-row">
         <button class="counter-btn" onclick="changeFamily(-1)"
                 ${n <= 1 ? 'disabled' : ''}
-                aria-label="Decrease family size">−</button>
+                aria-label="${t('decreaseFamilyBtn')}">−</button>
         <input class="counter-input" type="number" value="${n}" min="1" max="99"
                onblur="onFamilyInputBlur(this.value)"
                aria-label="${t('step2Label')}" />
         <button class="counter-btn" onclick="changeFamily(1)"
                 ${n >= 99 ? 'disabled' : ''}
-                aria-label="Increase family size">+</button>
+                aria-label="${t('increaseFamilyBtn')}">+</button>
       </div>
     </section>`;
 }
@@ -444,6 +444,12 @@ function onFamilyInputBlur(raw) {
 // Only called from changeFamily() and onFamilyInputBlur() — not from row interactions.
 function redistributePersons() {
   if (!state.foodRows.length) return;
+  if (state.familySize === 1) {
+    // Single person: assign to first row only (no counter UI to re-assign)
+    state.foodRows[0].persons = 1;
+    state.foodRows.slice(1).forEach(r => { r.persons = 0; });
+    return;
+  }
   const total = state.familySize;
   const perRow = Math.floor(total / state.foodRows.length);
   const remainder = total % state.foodRows.length;
@@ -491,7 +497,10 @@ function renderStep1() {
 function onCountryChange(code) {
   const newCountry = COUNTRIES.find(c => c.code === code);
   if (state.country && state.rowsModified) {
-    if (!confirm(`${t('confirmTitle')}\n${t('confirmBody')}`)) return;
+    if (!confirm(`${t('confirmTitle')}\n${t('confirmBody')}`)) {
+      render(); // restore <select> DOM to match state.country after user cancels
+      return;
+    }
   }
   state.country = newCountry;
   state.rowsModified = false;
@@ -503,6 +512,14 @@ function onCountryChange(code) {
 function prefillFoodRows() {
   const pf = state.country.primaryFoods;
   const total = state.familySize;
+  if (total === 1) {
+    // Single person: assign to first food row only
+    state.foodRows = pf.map((f, i) => ({
+      foodKey: f.key, name: '', isCustom: false, countryKg: f.kg,
+      persons: i === 0 ? 1 : 0,
+    }));
+    return;
+  }
   const perRow = Math.floor(total / pf.length);
   const remainder = total % pf.length;
   state.foodRows = pf.map((f, i) => ({

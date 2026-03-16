@@ -163,7 +163,7 @@ body {
   min-width: 0;
 }
 .food-emoji { font-size: 1.2rem; flex-shrink: 0; }
-.food-name  { font-size: 0.9rem; color: var(--text); white-space: nowrap; }
+.food-name  { font-size: 0.9rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .food-kg    { font-size: 0.8rem; color: var(--muted); margin-inline-start: 4px; }
 .food-row-controls {
   display: flex;
@@ -229,7 +229,6 @@ body {
 }
 .food-panel-header {
   display: flex;
-  justify-content: flex-end;
   margin-bottom: 10px;
 }
 .close-panel-btn {
@@ -239,6 +238,7 @@ body {
   cursor: pointer;
   font-size: 1rem;
   padding: 2px 6px;
+  margin-inline-start: auto; /* logical end — correct in both LTR and RTL */
 }
 .close-panel-btn:hover { color: var(--text); }
 
