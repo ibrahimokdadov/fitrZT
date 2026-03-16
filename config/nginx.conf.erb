@@ -1,13 +1,31 @@
-server {
-  listen <%= ENV["PORT"] %>;
-  server_name _;
-  root /app/public;
-  index index.html;
+daemon off;
+worker_processes auto;
+error_log /dev/stdout info;
+pid /tmp/nginx.pid;
 
-  location / {
-    try_files $uri $uri/ /index.html;
-  }
+events {
+  use epoll;
+  accept_mutex on;
+  worker_connections 1024;
+}
+
+http {
+  include mime.types;
+  default_type application/octet-stream;
+  sendfile on;
+  keepalive_timeout 65;
 
   gzip on;
   gzip_types text/css application/javascript text/javascript image/svg+xml;
+
+  server {
+    listen <%= ENV["PORT"] %>;
+    server_name _;
+    root /app/public;
+    index index.html;
+
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
 }
