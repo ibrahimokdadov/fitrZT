@@ -67,3 +67,43 @@ function sortedCountries() {
     )
   );
 }
+
+// ── Render ──────────────────────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  document.documentElement.lang = state.lang;
+  document.documentElement.dir  = state.lang === 'ar' ? 'rtl' : 'ltr';
+
+  app.innerHTML = `
+    <header class="app-header">
+      <div class="app-title-group">
+        <h1 class="app-title">${t('appTitle')}</h1>
+        <p class="app-subtitle">${t('appSubtitle')}</p>
+      </div>
+      <button class="lang-btn" onclick="toggleLang()" aria-label="Switch language">
+        ${t('langToggle')}
+      </button>
+    </header>
+
+    <main>
+      ${renderStep1()}
+      ${state.country ? renderStep2() : ''}
+      ${state.country ? renderStep3() : ''}
+      ${state.country && totalAssigned() === state.familySize ? renderResult() : ''}
+    </main>
+  `;
+}
+
+function toggleLang() {
+  state.lang = state.lang === 'en' ? 'ar' : 'en';
+  render();
+}
+
+// Stub renderers — filled in subsequent tasks
+function renderStep1() { return '<section class="step-card step-blue"><p>Step 1</p></section>'; }
+function renderStep2() { return '<section class="step-card step-green"><p>Step 2</p></section>'; }
+function renderStep3() { return '<section class="step-card step-purple"><p>Step 3</p></section>'; }
+function renderResult() { return '<section class="step-card step-gold"><p>Result</p></section>'; }
+
+// Boot
+render();
