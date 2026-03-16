@@ -100,10 +100,71 @@ function toggleLang() {
 }
 
 // Stub renderers — filled in subsequent tasks
-function renderStep1() { return '<section class="step-card step-blue"><p>Step 1</p></section>'; }
 function renderStep2() { return '<section class="step-card step-green"><p>Step 2</p></section>'; }
 function renderStep3() { return '<section class="step-card step-purple"><p>Step 3</p></section>'; }
 function renderResult() { return '<section class="step-card step-gold"><p>Result</p></section>'; }
+
+function renderStep1() {
+  const countries = sortedCountries();
+  const selectedCode = state.country ? state.country.code : '';
+  const options = countries.map(c =>
+    `<option value="${c.code}" ${c.code === selectedCode ? 'selected' : ''}>
+      ${state.lang === 'ar' ? c.ar : c.en}
+    </option>`
+  ).join('');
+
+  const badge = state.country ? (() => {
+    const pf = state.country.primaryFoods[0];
+    const food = FOODS[pf.key];
+    const foodName = state.lang === 'ar' ? food.ar : food.en;
+    const madhab = state.lang === 'ar' ? state.country.madhabAr : state.country.madhab;
+    return `<div class="info-badge">
+      ${t('infoBadge', { food: foodName, kg: fmt(pf.kg.toFixed(2)), madhab })}
+    </div>`;
+  })() : '';
+
+  return `
+    <section class="step-card step-blue">
+      <div class="step-heading">
+        <div class="step-number">1</div>
+        <span class="step-label">${t('step1Label')}</span>
+      </div>
+      <select class="country-select" onchange="onCountryChange(this.value)"
+              aria-label="${t('step1Label')}">
+        <option value="" disabled ${!selectedCode ? 'selected' : ''}>
+          ${t('countryPlaceholder')}
+        </option>
+        ${options}
+      </select>
+      ${badge}
+    </section>`;
+}
+
+function onCountryChange(code) {
+  const newCountry = COUNTRIES.find(c => c.code === code);
+  if (state.country && state.rowsModified) {
+    if (!confirm(`${t('confirmTitle')}\n${t('confirmBody')}`)) return;
+  }
+  state.country = newCountry;
+  state.rowsModified = false;
+  state.scholarChip = 'country';
+  prefillFoodRows();
+  render();
+}
+
+function prefillFoodRows() {
+  const pf = state.country.primaryFoods;
+  const total = state.familySize;
+  const perRow = Math.floor(total / pf.length);
+  const remainder = total % pf.length;
+  state.foodRows = pf.map((f, i) => ({
+    foodKey: f.key,
+    name: '',
+    isCustom: false,
+    countryKg: f.kg,
+    persons: perRow + (i === pf.length - 1 ? remainder : 0),
+  }));
+}
 
 // Boot
 render();

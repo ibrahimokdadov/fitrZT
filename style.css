@@ -85,3 +85,26 @@ body {
 .step-purple .step-number { background: var(--purple); }
 .step-gold   .step-number { background: var(--gold); color: #000; }
 .step-label { font-size: 1rem; font-weight: 600; }
+
+.country-select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.country-select:focus { outline: 2px solid var(--blue); }
+
+.info-badge {
+  margin-top: 10px;
+  background: #0f3460;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #93c5fd;
+  font-size: 0.85rem;
+}
