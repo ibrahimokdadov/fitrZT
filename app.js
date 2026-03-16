@@ -129,7 +129,7 @@ function renderStep3() {
       ? `<input class="kg-inline-input" type="number" step="0.01" min="0.01"
                value="${row.countryKg}"
                onblur="onCustomKgBlur(${i}, this.value)"
-               aria-label="kg per person" /> ${state.lang==='ar'?'كغ':'kg'}`
+               aria-label="${t('kgPerPerson')}" /> ${state.lang==='ar'?'كغ':'kg'}`
       : `${fmt(kg.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}`;
 
     return `
@@ -147,7 +147,7 @@ function renderStep3() {
             <span class="row-persons">${fmt(row.persons)}</span>
             <button class="counter-btn sm" onclick="changeRowPersons(${i},1)"
                     ${plusDisabled?'disabled':''}
-                    aria-label="Add person">+</button>
+                    aria-label="${t('addPersonBtn')}">+</button>
           `}
           <span class="row-subtotal">${fmt(subtotal.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</span>
           <button class="remove-row-btn" onclick="removeRow(${i})"
