@@ -140,6 +140,7 @@ body {
 }
 .counter-input::-webkit-inner-spin-button,
 .counter-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.counter-input { -moz-appearance: textfield; }
 .counter-input:focus { outline: 2px solid var(--green); }
 
 /* ── Task 9: Food rows ──────────────────────────────────────────────────── */
@@ -310,7 +311,7 @@ body {
   padding: 4px 0;
   border-bottom: 1px solid var(--border);
 }
-.result-line:last-of-type { border-bottom: none; }
+.result-lines .result-line:last-child { border-bottom: none; }
 .override-label {
   font-size: 0.8rem;
   color: var(--dimmed);

@@ -1,5 +1,14 @@
 // app.js — populated in Tasks 5+
 
+// ── HTML escape helper (prevents XSS from user-supplied strings in innerHTML) ──
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 // ── State ──────────────────────────────────────────────────────────────────
 const state = {
   lang: (navigator.language || '').startsWith('ar') ? 'ar' : 'en',
@@ -107,7 +116,7 @@ function renderStep3() {
   const rows = state.foodRows.map((row, i) => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
     const name = row.isCustom
-      ? row.name
+      ? escHtml(row.name)
       : (state.lang === 'ar' ? food.ar : food.en);
     const emoji = row.isCustom ? '🍽' : food.emoji;
     const kg = effectiveKg(row);
@@ -194,7 +203,7 @@ function removeRow(i) {
 
 function onCustomKgBlur(i, raw) {
   const v = parseFloat(raw);
-  if (!isNaN(v) && v > 0) {
+  if (!isNaN(v) && isFinite(v) && v > 0) {
     state.foodRows[i].countryKg = v;
     render();
   }
@@ -221,7 +230,6 @@ function renderFoodPanel() {
   return `
     <div class="food-panel">
       <div class="food-panel-header">
-        <span></span>
         <button class="close-panel-btn" onclick="toggleFoodPanel()"
                 aria-label="${t('closePanelBtn')}">✕</button>
       </div>
@@ -248,7 +256,7 @@ function addBuiltinFood(key) {
     name: '',
     isCustom: false,
     countryKg: food.majorityKg,
-    persons: 0,
+    persons: state.familySize === 1 ? 1 : 0,
   });
   state.foodPanelOpen = false;
   state.rowsModified = true;
@@ -283,7 +291,7 @@ function addCustomFood() {
     name: nameEl.value.trim(),
     isCustom: true,
     countryKg: kg,
-    persons: 0,
+    persons: state.familySize === 1 ? 1 : 0,
   });
   state.foodPanelOpen = false;
   state.rowsModified = true;
@@ -301,7 +309,7 @@ function renderResult() {
   const lines = state.foodRows.map(row => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
     const name = row.isCustom
-      ? row.name
+      ? escHtml(row.name)
       : (state.lang === 'ar' ? food.ar : food.en);
     const kg = round2(effectiveKg(row) * row.persons);
     return `<div class="result-line">
@@ -317,7 +325,7 @@ function renderResult() {
     <section class="step-card step-gold">
       <div class="result-total-label">${t('resultTitle')}</div>
       <div class="result-total-kg">${fmt(total.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</div>
-      ${lines}
+      <div class="result-lines">${lines}</div>
       <div class="override-label">${t('overrideLabel')}</div>
       <div class="chip-row">${chips}</div>
       <div class="result-actions">
@@ -338,7 +346,7 @@ function selectChip(key) {
 
 function buildCopyText() {
   const countryName = state.lang === 'ar' ? state.country.ar : state.country.en;
-  const lines = state.foodRows.map(row => {
+  const lines = state.foodRows.filter(r => r.persons > 0).map(row => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
     const name = row.isCustom ? row.name : (state.lang==='ar' ? food.ar : food.en);
     const kg = round2(effectiveKg(row) * row.persons);
