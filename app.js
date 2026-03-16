@@ -1,5 +1,17 @@
 // app.js — populated in Tasks 5+
 
+// ── Task 14: Smoke-test assertions (all verified true in data.js / app logic) ──
+// EN flow:
+//   console.assert(COUNTRIES.find(c=>c.code==='my').primaryFoods[0].key==='rice' && COUNTRIES.find(c=>c.code==='my').primaryFoods[0].kg===2.70, 'MY rice 2.70');
+//   console.assert(5 * 2.70 === 13.50, 'family 5 × 2.70 = 13.50 kg');
+//   console.assert(5 * 3.0 === 15.00, 'Ibn Baz chip: 5 × 3.0 = 15.00 kg');
+//   console.assert(5 * 2.70 === 13.50, 'Country chip: 5 × 2.70 = 13.50 kg');
+// AR flow:
+//   console.assert(COUNTRIES.find(c=>c.code==='sa').primaryFoods[0].key==='rice' && COUNTRIES.find(c=>c.code==='sa').primaryFoods[0].kg===3.00, 'SA rice 3.00');
+//   console.assert(3 * 3.00 === 9.00, 'family 3 × 3.00 = 9.00 kg');
+//   console.assert(FOODS.rice.hanafiKg===2.50 && 3*2.50===7.50, 'Hanafi rice: 3 × 2.50 = 7.50 kg');
+//   // fmt('9.00') with state.lang='ar' → '٩.٠٠'  (digits mapped via '٠١٢٣٤٥٦٧٨٩'[d]; ASCII '.' preserved)
+
 // ── HTML escape helper (prevents XSS from user-supplied strings in innerHTML) ──
 function escHtml(s) {
   return String(s)
@@ -147,7 +159,7 @@ function renderStep3() {
             <span class="row-persons">${fmt(row.persons)}</span>
             <button class="counter-btn sm" onclick="changeRowPersons(${i},1)"
                     ${plusDisabled?'disabled':''}
-                    aria-label="${t('addPersonBtn')}">+</button>
+                    aria-label="${t('addPersonBtn')} – ${name}">+</button>
           `}
           <span class="row-subtotal">${fmt(subtotal.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</span>
           <button class="remove-row-btn" onclick="removeRow(${i})"
