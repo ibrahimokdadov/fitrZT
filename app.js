@@ -100,9 +100,57 @@ function toggleLang() {
 }
 
 // Stub renderers — filled in subsequent tasks
-function renderStep2() { return '<section class="step-card step-green"><p>Step 2</p></section>'; }
 function renderStep3() { return '<section class="step-card step-purple"><p>Step 3</p></section>'; }
 function renderResult() { return '<section class="step-card step-gold"><p>Result</p></section>'; }
+
+function renderStep2() {
+  const n = state.familySize;
+  return `
+    <section class="step-card step-green">
+      <div class="step-heading">
+        <div class="step-number">2</div>
+        <span class="step-label">${t('step2Label')}</span>
+      </div>
+      <div class="counter-row">
+        <button class="counter-btn" onclick="changeFamily(-1)"
+                ${n <= 1 ? 'disabled' : ''}
+                aria-label="Decrease family size">−</button>
+        <input class="counter-input" type="number" value="${n}" min="1" max="99"
+               onblur="onFamilyInputBlur(this.value)"
+               aria-label="${t('step2Label')}" />
+        <button class="counter-btn" onclick="changeFamily(1)"
+                ${n >= 99 ? 'disabled' : ''}
+                aria-label="Increase family size">+</button>
+      </div>
+    </section>`;
+}
+
+function changeFamily(delta) {
+  const next = state.familySize + delta;
+  if (next < 1 || next > 99) return;
+  state.familySize = next;
+  redistributePersons();
+  render();
+}
+
+function onFamilyInputBlur(raw) {
+  const n = parseInt(raw, 10);
+  state.familySize = isNaN(n) || n < 1 ? 1 : n > 99 ? 99 : n;
+  redistributePersons();
+  render();
+}
+
+// Redistribute persons evenly when family SIZE changes.
+// Only called from changeFamily() and onFamilyInputBlur() — not from row interactions.
+function redistributePersons() {
+  if (!state.foodRows.length) return;
+  const total = state.familySize;
+  const perRow = Math.floor(total / state.foodRows.length);
+  const remainder = total % state.foodRows.length;
+  state.foodRows.forEach((r, i) => {
+    r.persons = perRow + (i === state.foodRows.length - 1 ? remainder : 0);
+  });
+}
 
 function renderStep1() {
   const countries = sortedCountries();
