@@ -263,9 +263,9 @@ function renderStep3() {
             ${kgDisplay}
             ${!row.isCustom ? `<button class="cite-tag" onclick="openQuote('${rowSourceKey}')"
                 aria-label="${t('sourceLabel')}">
-                ${escHtml(state.lang === 'ar'
+                ${escHtml((state.lang === 'ar'
                   ? SCHOLAR_PRESETS.find(p=>p.key===state.scholarChip).source_ar
-                  : SCHOLAR_PRESETS.find(p=>p.key===state.scholarChip).source_en)}
+                  : SCHOLAR_PRESETS.find(p=>p.key===state.scholarChip).source_en).split(' · ')[0])}
               </button>` : ''}
           </span>
         </div>
