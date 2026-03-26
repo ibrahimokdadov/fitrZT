@@ -101,6 +101,7 @@ const SCHOLAR_PRESETS = [
     quote_ar: 'هذا المقدار يتبع الإرشاد الرسمي للهيئات الدينية في البلد بناءً على المذهب المعتمد محليًا.',
     ref_en: 'Local Fatwa Council',
     ref_ar: 'مجلس الإفتاء المحلي',
+    url: null,
   },
   {
     key: 'maliki_shafii',
@@ -112,6 +113,7 @@ const SCHOLAR_PRESETS = [
     quote_ar: 'الصاع يساوي بالوزن بالجرامات ٢١٥٦. والواجب صاع من غالب قوت البلد.',
     ref_en: 'Al-Qaradawi, Fiqh al-Zakat, Vol. 2, pp. 890–892',
     ref_ar: 'القرضاوي، فقه الزكاة، ج٢، ص٨٩٠–٨٩٢',
+    url: 'https://monzer.kahf.com/books/english/fiqhalzakah_vol2.pdf',
   },
   {
     key: 'hanafi',
@@ -123,6 +125,7 @@ const SCHOLAR_PRESETS = [
     quote_ar: 'يجزئ نصف صاع من البر عند أبي حنيفة، وهو رأي جماعة من الصحابة. والصاع عند الحنفية ثمانية أرطال عراقية (نحو ٣.٢٥ كغ). وللقمح تحديدًا يجزئ نصف صاع (نحو ١.٦٢٥ كغ).',
     ref_en: 'Ibn Abidin, Radd al-Muhtar; Al-Qaradawi, Fiqh al-Zakat, p. 882',
     ref_ar: 'ابن عابدين، رد المحتار؛ القرضاوي، فقه الزكاة، ص٨٨٢',
+    url: null,
   },
   {
     key: 'ibn_baz',
@@ -134,6 +137,7 @@ const SCHOLAR_PRESETS = [
     quote_ar: 'أما بالكيلو فيقارب ثلاثة كيلو، والأحوط أن يخرج من الكيل.',
     ref_en: 'Ibn Baz, Majmuʿ Fatawa wa Maqalat, Vol. 14',
     ref_ar: 'ابن باز، مجموع فتاوى ومقالات، ج١٤',
+    url: 'https://binbaz.org.sa/fatwas/5912/%D9%83%D9%85-%D9%85%D9%82%D8%AF%D8%A7%D8%B1-%D8%B2%D9%83%D8%A7%D8%A9-%D8%A7%D9%84%D9%81%D8%B7%D8%B1',
   },
 ];
 
@@ -143,18 +147,21 @@ const QUOTES = {
     ref_ar: 'أبو سعيد الخدري، صحيح البخاري ١٥٠٦، صحيح مسلم ٩٨٥',
     quote_ar: 'كنا نخرج زكاة الفطر صاعاً من طعام، أو صاعاً من أقط، أو صاعاً من شعير، أو صاعاً من تمر، أو صاعاً من زبيب.',
     quote_en: 'We used to pay Zakat al-Fitr: one Saʿ of food, or one Saʿ of dried cheese (aqit), or one Saʿ of barley, or one Saʿ of dates, or one Saʿ of raisins.',
+    url: 'https://sunnah.com/bukhari:1506',
   },
   food_local_staple: {
     ref_en: 'Al-Qaradawi, Fiqh al-Zakat, p. 892; Maliki principle: غالب قوت البلد',
     ref_ar: 'القرضاوي، فقه الزكاة، ص٨٩٢؛ المبدأ المالكي: غالب قوت البلد',
     quote_ar: 'لو أن قوماً يعيشون على الأرز كانت فطرتهم مما يتقوتون به.',
     quote_en: 'If a people live on rice, their Fitrah is from what they eat as their staple.',
+    url: 'https://monzer.kahf.com/books/english/fiqhalzakah_vol2.pdf',
   },
   food_dispute_flour: {
     ref_en: 'Al-Shafiʿi, al-Umm; Al-Nawawi, al-Majmuʿ, Vol. 6',
     ref_ar: 'الشافعي، الأم؛ النووي، المجموع، ج٦',
     quote_ar: 'لا يجزئ الدقيق والسويق والخبز في زكاة الفطر عند الشافعية.',
     quote_en: 'Flour, sawiq, and bread are not valid for Zakat al-Fitr according to the Shafiʿi school.',
+    url: 'https://islamqa.info/en/answers/99743/it-is-permissible-to-pay-zakaat-al-fitr-in-the-form-of-flour',
   },
 };
 

@@ -73,11 +73,11 @@ function getQuote(key) {
   if (key.startsWith('chip_')) {
     const presetKey = key.slice(5); // remove 'chip_'
     const p = SCHOLAR_PRESETS.find(x => x.key === presetKey);
-    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar } : null;
+    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar, url: p.url } : null;
   }
   if (key === 'result_basis' || (key.startsWith('row_') && key.endsWith('_source'))) {
     const p = SCHOLAR_PRESETS.find(x => x.key === state.scholarChip);
-    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar } : null;
+    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar, url: p.url } : null;
   }
   if (key.startsWith('row_') && key.endsWith('_dispute')) {
     // Flour is the only food with a dispute; all _dispute keys map to food_dispute_flour.
@@ -98,9 +98,14 @@ function renderQuotePanel(key) {
   const q = getQuote(key);
   if (!q) return '';
   const ref   = state.lang === 'ar' ? q.ref_ar   : q.ref_en;
+  const linkHtml = q.url
+    ? `<a class="quote-panel-link" href="${escHtml(q.url)}" target="_blank" rel="noopener noreferrer">
+        ${state.lang === 'ar' ? 'عرض المصدر ↗' : 'View source ↗'}
+       </a>`
+    : '';
   return `
     <div class="quote-panel" role="region" aria-label="${state.lang === 'ar' ? 'مصدر علمي' : 'Scholar source'}">
-      <div class="quote-panel-ref">${escHtml(ref)}</div>
+      <div class="quote-panel-ref">${escHtml(ref)}${linkHtml}</div>
       <div class="quote-panel-divider"></div>
       <div class="quote-panel-arabic">${escHtml(q.quote_ar)}</div>
       <div class="quote-panel-divider"></div>

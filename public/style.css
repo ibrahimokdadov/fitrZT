@@ -564,6 +564,24 @@ main { padding-bottom: 40px; }
   color: var(--muted);
   font-style: italic;
 }
+.quote-panel-ref {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.quote-panel-link {
+  font-size: 0.70rem;
+  font-weight: 500;
+  color: var(--blue);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.quote-panel-link:hover {
+  text-decoration: underline;
+}
 
 /* ── Dispute Badge ───────────────────────────────────────────────────────── */
 .dispute-badge {
