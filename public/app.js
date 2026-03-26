@@ -79,6 +79,10 @@ function getQuote(key) {
     const p = SCHOLAR_PRESETS.find(x => x.key === state.scholarChip);
     return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar } : null;
   }
+  if (key.startsWith('row_') && key.endsWith('_dispute')) {
+    // Flour is the only food with a dispute; all _dispute keys map to food_dispute_flour.
+    return QUOTES.food_dispute_flour || null;
+  }
   return QUOTES[key] || null;
 }
 
