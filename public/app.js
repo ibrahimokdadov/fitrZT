@@ -343,10 +343,25 @@ function renderFoodPanel() {
   const grid = foodKeys.map(key => {
     const food = FOODS[key];
     const name = state.lang === 'ar' ? food.ar : food.en;
+
+    // Determine source label text
+    let sourceText, sourceClass;
+    if (food.dispute) {
+      sourceText = `⚠ ${t('disputed')} · ${food.dispute[state.lang === 'ar' ? 'note_ar' : 'note_en']}`;
+      sourceClass = 'food-source-label disputed';
+    } else if (food.source_en.includes('hadith') || food.source_en.includes('Hadith')) {
+      sourceText = t('hadithSource');
+      sourceClass = 'food-source-label';
+    } else {
+      sourceText = t('localStaple');
+      sourceClass = 'food-source-label';
+    }
+
     return `
       <button class="food-picker-item" onclick="addBuiltinFood('${key}')">
         <span>${food.emoji}</span>
         <span>${name}</span>
+        <span class="${sourceClass}">${sourceText}</span>
       </button>`;
   }).join('');
 
