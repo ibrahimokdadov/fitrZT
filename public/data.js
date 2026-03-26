@@ -91,10 +91,50 @@ const COUNTRIES = [
 ];
 
 const SCHOLAR_PRESETS = [
-  { key: 'country',      en: 'Country default',  ar: 'الافتراضي'        },
-  { key: 'maliki_shafii',en: "Maliki / Shafi'i", ar: 'مالكي / شافعي'   },
-  { key: 'hanafi',       en: 'Hanafi',            ar: 'حنفي'             },
-  { key: 'ibn_baz',      en: 'Ibn Baz / Hanbali', ar: 'ابن باز / حنبلي' },
+  {
+    key: 'country',
+    en: 'Country default', ar: 'الافتراضي',
+    sa_kg: null, // dynamic — uses country's primaryFoods[0].kg at render time
+    source_en: 'Local Fatwa Council',
+    source_ar: 'مجلس الإفتاء المحلي',
+    quote_en: 'This amount follows the official guidance of the country\'s religious authorities based on local madhab practice.',
+    quote_ar: 'هذا المقدار يتبع الإرشاد الرسمي للهيئات الدينية في البلد بناءً على المذهب المعتمد محليًا.',
+    ref_en: 'Local Fatwa Council',
+    ref_ar: 'مجلس الإفتاء المحلي',
+  },
+  {
+    key: 'maliki_shafii',
+    en: 'Maliki / Shafi\'i', ar: 'مالكي / شافعي',
+    sa_kg: 2.156,
+    source_en: 'Qaradawi · Fiqh al-Zakat, Vol. 2, pp. 890–892',
+    source_ar: 'القرضاوي · فقه الزكاة، ج٢، ص٨٩٠–٨٩٢',
+    quote_en: 'The Saʿ equals 2,156 grams by weight. The obligatory amount is one Saʿ from the predominant staple food of the country (غالب قوت البلد).',
+    quote_ar: 'الصاع يساوي بالوزن بالجرامات ٢١٥٦. والواجب صاع من غالب قوت البلد.',
+    ref_en: 'Al-Qaradawi, Fiqh al-Zakat, Vol. 2, pp. 890–892',
+    ref_ar: 'القرضاوي، فقه الزكاة، ج٢، ص٨٩٠–٨٩٢',
+  },
+  {
+    key: 'hanafi',
+    en: 'Hanafi', ar: 'حنفي',
+    sa_kg: 3.25,
+    source_en: 'Ibn Abidin · Radd al-Muhtar; Qaradawi · Fiqh al-Zakat, p. 882',
+    source_ar: 'ابن عابدين · رد المحتار؛ القرضاوي · فقه الزكاة، ص٨٨٢',
+    quote_en: 'Half a Saʿ of wheat suffices according to Abu Hanifa, which was the opinion of a group of Companions. The Hanafi Saʿ equals 8 Iraqi ratls (approx. 3.25 kg). For wheat specifically, half a Saʿ (approx. 1.625 kg) applies.',
+    quote_ar: 'يجزئ نصف صاع من البر عند أبي حنيفة، وهو رأي جماعة من الصحابة. والصاع عند الحنفية ثمانية أرطال عراقية (نحو ٣.٢٥ كغ). وللقمح تحديدًا يجزئ نصف صاع (نحو ١.٦٢٥ كغ).',
+    ref_en: 'Ibn Abidin, Radd al-Muhtar; Al-Qaradawi, Fiqh al-Zakat, p. 882',
+    ref_ar: 'ابن عابدين، رد المحتار؛ القرضاوي، فقه الزكاة، ص٨٨٢',
+  },
+  {
+    key: 'ibn_baz',
+    en: 'Ibn Baz / Hanbali', ar: 'ابن باز / حنبلي',
+    sa_kg: 3.00,
+    source_en: 'Ibn Baz · Majmuʿ Fatawa wa Maqalat, Vol. 14',
+    source_ar: 'ابن باز · مجموع فتاوى ومقالات، ج١٤',
+    quote_en: 'As for kilograms, it is approximately three kilograms. It is more cautious to measure by volume.',
+    quote_ar: 'أما بالكيلو فيقارب ثلاثة كيلو، والأحوط أن يخرج من الكيل.',
+    ref_en: 'Ibn Baz, Majmuʿ Fatawa wa Maqalat, Vol. 14',
+    ref_ar: 'ابن باز، مجموع فتاوى ومقالات، ج١٤',
+  },
 ];
 
 const TRANSLATIONS = {
