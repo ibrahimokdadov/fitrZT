@@ -31,6 +31,7 @@ const state = {
   scholarChip: 'country',
   foodPanelOpen: false,
   rowsModified: false, // true once user modifies pre-filled rows
+  openQuoteKey: null, // key of the currently open quote panel, or null
 };
 
 // ── Translation helper ──────────────────────────────────────────────────────
@@ -60,6 +61,47 @@ function fmt(n) {
 // ── Round to 2 decimal places ───────────────────────────────────────────────
 function round2(n) {
   return Math.round(n * 100) / 100;
+}
+
+// ── Resolve a quote object by key ───────────────────────────────────────────
+// Keys prefixed 'chip_'  → scholar preset data (for Step 1 chips)
+// Keys prefixed 'row_'   → active scholar preset data (for food row cite-tags)
+// 'result_basis'         → active scholar preset data (for result basis line)
+// 'food_hadith', 'food_local_staple', 'food_dispute_flour' → QUOTES entries
+function getQuote(key) {
+  if (key === null) return null;
+  if (key.startsWith('chip_')) {
+    const presetKey = key.slice(5); // remove 'chip_'
+    const p = SCHOLAR_PRESETS.find(x => x.key === presetKey);
+    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar } : null;
+  }
+  if (key === 'result_basis' || (key.startsWith('row_') && key.endsWith('_source'))) {
+    const p = SCHOLAR_PRESETS.find(x => x.key === state.scholarChip);
+    return p ? { ref_en: p.ref_en, ref_ar: p.ref_ar, quote_en: p.quote_en, quote_ar: p.quote_ar } : null;
+  }
+  return QUOTES[key] || null;
+}
+
+function openQuote(key) {
+  state.openQuoteKey = state.openQuoteKey === key ? null : key;
+  render();
+}
+
+// Renders an inline quote panel if state.openQuoteKey matches key.
+// Returns empty string otherwise.
+function renderQuotePanel(key) {
+  if (state.openQuoteKey !== key) return '';
+  const q = getQuote(key);
+  if (!q) return '';
+  const ref   = state.lang === 'ar' ? q.ref_ar   : q.ref_en;
+  return `
+    <div class="quote-panel" role="region" aria-label="${state.lang === 'ar' ? 'مصدر علمي' : 'Scholar source'}">
+      <div class="quote-panel-ref">${escHtml(ref)}</div>
+      <div class="quote-panel-divider"></div>
+      <div class="quote-panel-arabic">${escHtml(q.quote_ar)}</div>
+      <div class="quote-panel-divider"></div>
+      <div class="quote-panel-translation">${escHtml(q.quote_en)}</div>
+    </div>`;
 }
 
 // ── Get effective kg for a food row given active scholar chip ───────────────
@@ -409,6 +451,7 @@ function resetAll() {
   state.scholarChip = 'country';
   state.foodPanelOpen = false;
   state.rowsModified = false;
+  state.openQuoteKey = null;
   render();
 }
 
