@@ -234,12 +234,31 @@ function renderStep3() {
                aria-label="${t('kgPerPerson')}" /> ${state.lang==='ar'?'كغ':'kg'}`
       : `${fmt(kg.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}`;
 
+    // Dispute badge (flour only)
+    const disputeHtml = (!row.isCustom && food && food.dispute)
+      ? `<button class="dispute-badge" onclick="openQuote('row_${i}_dispute')"
+                 aria-label="${t('disputed')}">
+           ⚠ ${escHtml(food.dispute[state.lang === 'ar' ? 'note_ar' : 'note_en'])}
+         </button>`
+      : '';
+
+    // Source cite-tag key for this row (points to active scholar preset)
+    const rowSourceKey = `row_${i}_source`;
+
     return `
       <div class="food-row">
         <div class="food-row-info">
           <span class="food-emoji">${emoji}</span>
-          <span class="food-name">${name}</span>
-          <span class="food-kg">${kgDisplay}</span>
+          <span class="food-name">${name} ${disputeHtml}</span>
+          <span class="food-kg">
+            ${kgDisplay}
+            ${!row.isCustom ? `<button class="cite-tag" onclick="openQuote('${rowSourceKey}')"
+                aria-label="${t('sourceLabel')}">
+                ${escHtml(state.lang === 'ar'
+                  ? SCHOLAR_PRESETS.find(p=>p.key===state.scholarChip).source_ar
+                  : SCHOLAR_PRESETS.find(p=>p.key===state.scholarChip).source_en)}
+              </button>` : ''}
+          </span>
         </div>
         <div class="food-row-controls">
           ${isSingle ? '' : `
@@ -255,6 +274,8 @@ function renderStep3() {
           <button class="remove-row-btn" onclick="removeRow(${i})"
                   aria-label="${t('removeFoodRow')}">✕</button>
         </div>
+        ${renderQuotePanel(rowSourceKey)}
+        ${(!row.isCustom && food && food.dispute) ? renderQuotePanel(`row_${i}_dispute`) : ''}
       </div>`;
   }).join('');
 
