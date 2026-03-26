@@ -453,10 +453,29 @@ function renderResult() {
 
   // copyText is built on-demand in copyResult() — not needed at render time
 
+  const activePreset = SCHOLAR_PRESETS.find(p => p.key === state.scholarChip);
+  const presetLabel  = state.lang === 'ar' ? activePreset.ar : activePreset.en;
+  const saKgVal      = state.scholarChip === 'country'
+    ? state.country.primaryFoods[0].kg
+    : activePreset.sa_kg;
+  const saKgStr      = `${fmt(saKgVal.toFixed(2))} ${state.lang === 'ar' ? 'كغ/شخص' : 'kg/person'}`;
+  const presetSource = state.lang === 'ar' ? activePreset.source_ar : activePreset.source_en;
+
+  const basisLineHtml = `
+    <div class="basis-line">
+      <span>${t('basedOn')} ${escHtml(presetLabel)} · ${saKgStr}</span>
+      <button class="cite-tag" onclick="openQuote('result_basis')"
+              aria-label="${t('sourceLabel')}">
+        ${escHtml(presetSource)}
+      </button>
+    </div>
+    ${renderQuotePanel('result_basis')}`;
+
   return `
     <section class="step-card step-gold">
       <div class="result-total-label">${t('resultTitle')}</div>
       <div class="result-total-kg">${fmt(total.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</div>
+      ${basisLineHtml}
       <div class="result-lines">${lines}</div>
       <div class="result-actions">
         <button class="result-btn copy-btn" id="copyBtn" onclick="copyResult()">
@@ -475,6 +494,10 @@ function selectChip(key) {
 }
 
 function buildCopyText() {
+  const activePreset = SCHOLAR_PRESETS.find(p => p.key === state.scholarChip);
+  const saKgVal = state.scholarChip === 'country'
+    ? state.country.primaryFoods[0].kg
+    : activePreset.sa_kg;
   const countryName = state.lang === 'ar' ? state.country.ar : state.country.en;
   const lines = state.foodRows.filter(r => r.persons > 0).map(row => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
@@ -496,7 +519,11 @@ function buildCopyText() {
     ? `زكاة الفطر — ${countryName}\n${fmt(state.familySize)} ${personLabel(state.familySize)}`
     : `Zakat al-Fitr — ${countryName}\n${state.familySize} ${personLabel(state.familySize)}`;
 
-  return `${header}\n${lines}\n${totalStr}`;
+  const basisStr = state.lang === 'ar'
+    ? `بناءً على: ${state.lang === 'ar' ? activePreset.ar : activePreset.en} (${fmt(saKgVal.toFixed(2))} كغ/شخص)`
+    : `Based on: ${activePreset.en} (${saKgVal.toFixed(2)} kg/person)`;
+
+  return `${header}\n${lines}\n${totalStr}\n${basisStr}`;
 }
 
 async function copyResult() {
