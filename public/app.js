@@ -104,6 +104,45 @@ function renderQuotePanel(key) {
     </div>`;
 }
 
+// Renders scholar chip selector with cite-tags. Used in renderStep1().
+function renderScholarSelector() {
+  const chipsHtml = SCHOLAR_PRESETS.map(p => {
+    const label = state.lang === 'ar' ? p.ar : p.en;
+    // sa_kg: for 'country' preset use the country's primaryFoods[0].kg dynamically
+    const saKgVal = p.key === 'country'
+      ? state.country.primaryFoods[0].kg
+      : p.sa_kg;
+    const saKgStr = `${fmt(saKgVal.toFixed(2))} ${state.lang === 'ar' ? 'كغ' : 'kg'}`;
+    const hanafiNote = (p.key === 'hanafi')
+      ? `<span class="chip-kg">(${t('hanafiWheatNote')})</span>`
+      : '';
+    const sourceLabel = state.lang === 'ar' ? p.source_ar : p.source_en;
+    const quoteKey = `chip_${p.key}`;
+    const isActive = state.scholarChip === p.key;
+    return `
+      <div class="scholar-chip-wrap">
+        <div class="scholar-chip-row">
+          <button class="chip ${isActive ? 'chip-active' : ''}" onclick="selectChip('${p.key}')">
+            ${escHtml(label)}
+            <span class="chip-kg">${saKgStr}</span>
+            ${hanafiNote}
+          </button>
+          <button class="cite-tag" onclick="openQuote('${quoteKey}')"
+                  aria-label="${t('sourceLabel')}">
+            ${escHtml(sourceLabel)}
+          </button>
+        </div>
+        ${renderQuotePanel(quoteKey)}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="scholar-selector">
+      <div class="scholar-selector-title">${t('scholarMethodLabel')}</div>
+      <div class="scholar-chips">${chipsHtml}</div>
+    </div>`;
+}
+
 // ── Get effective kg for a food row given active scholar chip ───────────────
 function effectiveKg(row) {
   if (row.isCustom) return row.countryKg; // custom always uses user-entered kg
@@ -363,12 +402,6 @@ function addCustomFood() {
 
 // ── Task 11: Scholar chips + result + copy + reset ──────────────────────────
 function renderResult() {
-  const chips = SCHOLAR_PRESETS.map(p => `
-    <button class="chip ${state.scholarChip === p.key ? 'chip-active' : ''}"
-            onclick="selectChip('${p.key}')">
-      ${state.lang === 'ar' ? p.ar : p.en}
-    </button>`).join('');
-
   const lines = state.foodRows.filter(r => r.persons > 0).map(row => {
     const food = row.isCustom ? null : FOODS[row.foodKey];
     const name = row.isCustom
@@ -389,8 +422,6 @@ function renderResult() {
       <div class="result-total-label">${t('resultTitle')}</div>
       <div class="result-total-kg">${fmt(total.toFixed(2))} ${state.lang==='ar'?'كغ':'kg'}</div>
       <div class="result-lines">${lines}</div>
-      <div class="override-label">${t('overrideLabel')}</div>
-      <div class="chip-row">${chips}</div>
       <div class="result-actions">
         <button class="result-btn copy-btn" id="copyBtn" onclick="copyResult()">
           ${t('copyBtn')}
@@ -543,6 +574,7 @@ function renderStep1() {
         ${options}
       </select>
       ${badge}
+      ${state.country ? renderScholarSelector() : ''}
     </section>`;
 }
 
