@@ -137,6 +137,27 @@ const SCHOLAR_PRESETS = [
   },
 ];
 
+const QUOTES = {
+  food_hadith: {
+    ref_en: 'Abu Saʿid al-Khudri, Sahih al-Bukhari #1506, Sahih Muslim #985',
+    ref_ar: 'أبو سعيد الخدري، صحيح البخاري ١٥٠٦، صحيح مسلم ٩٨٥',
+    quote_ar: 'كنا نخرج زكاة الفطر صاعاً من طعام، أو صاعاً من أقط، أو صاعاً من شعير، أو صاعاً من تمر، أو صاعاً من زبيب.',
+    quote_en: 'We used to pay Zakat al-Fitr: one Saʿ of food, or one Saʿ of dried cheese (aqit), or one Saʿ of barley, or one Saʿ of dates, or one Saʿ of raisins.',
+  },
+  food_local_staple: {
+    ref_en: 'Al-Qaradawi, Fiqh al-Zakat, p. 892; Maliki principle: غالب قوت البلد',
+    ref_ar: 'القرضاوي، فقه الزكاة، ص٨٩٢؛ المبدأ المالكي: غالب قوت البلد',
+    quote_ar: 'لو أن قوماً يعيشون على الأرز كانت فطرتهم مما يتقوتون به.',
+    quote_en: 'If a people live on rice, their Fitrah is from what they eat as their staple.',
+  },
+  food_dispute_flour: {
+    ref_en: 'Al-Shafiʿi, al-Umm; Al-Nawawi, al-Majmuʿ, Vol. 6',
+    ref_ar: 'الشافعي، الأم؛ النووي، المجموع، ج٦',
+    quote_ar: 'لا يجزئ الدقيق والسويق والخبز في زكاة الفطر عند الشافعية.',
+    quote_en: 'Flour, sawiq, and bread are not valid for Zakat al-Fitr according to the Shafiʿi school.',
+  },
+};
+
 const TRANSLATIONS = {
   en: {
     appTitle:                  'Zakat al-Fitr Calculator',
@@ -176,6 +197,14 @@ const TRANSLATIONS = {
     confirmBody:               'This will reset your food selection.',
     confirmCancel:             'Cancel',
     confirmReset:              'Reset',
+    scholarMethodLabel:  'Calculation method',
+    sourceLabel:         'Source',
+    basedOn:             'Based on:',
+    hadithSource:        'From hadith',
+    localStaple:         'Local staple',
+    disputed:            'Disputed',
+    closeSource:         'Close source',
+    hanafiWheatNote:     '½ Saʿ for wheat',
   },
   ar: {
     appTitle:                  'حاسبة زكاة الفطر',
@@ -215,5 +244,13 @@ const TRANSLATIONS = {
     confirmBody:               'سيتم إعادة تعيين اختيار الطعام.',
     confirmCancel:             'إلغاء',
     confirmReset:              'إعادة تعيين',
+    scholarMethodLabel:  'طريقة الحساب',
+    sourceLabel:         'المصدر',
+    basedOn:             'بناءً على:',
+    hadithSource:        'من الحديث',
+    localStaple:         'غالب قوت البلد',
+    disputed:            'مختلف فيه',
+    closeSource:         'إغلاق المصدر',
+    hanafiWheatNote:     'نصف صاع للقمح',
   },
 };
