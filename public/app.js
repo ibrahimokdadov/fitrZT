@@ -524,7 +524,7 @@ function buildCopyText() {
     : `Zakat al-Fitr — ${countryName}\n${state.familySize} ${personLabel(state.familySize)}`;
 
   const basisStr = state.lang === 'ar'
-    ? `بناءً على: ${state.lang === 'ar' ? activePreset.ar : activePreset.en} (${fmt(saKgVal.toFixed(2))} كغ/شخص)`
+    ? `بناءً على: ${activePreset.ar} (${fmt(saKgVal.toFixed(2))} كغ/شخص)`
     : `Based on: ${activePreset.en} (${saKgVal.toFixed(2)} kg/person)`;
 
   return `${header}\n${lines}\n${totalStr}\n${basisStr}`;
