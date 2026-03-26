@@ -1,15 +1,68 @@
 // data.js — populated in Tasks 2–4
 const FOODS = {
-  wheat:    { en: 'Wheat',         ar: 'قمح',  emoji: '🌾', majorityKg: 2.04, hanafiKg: 1.625 },
-  barley:   { en: 'Barley',        ar: 'شعير', emoji: '🌾', majorityKg: 2.30, hanafiKg: 3.25  },
-  dates:    { en: 'Dates',         ar: 'تمر',  emoji: '🌴', majorityKg: 1.80, hanafiKg: 3.25  },
-  raisins:  { en: 'Raisins',       ar: 'زبيب', emoji: '🍇', majorityKg: 1.64, hanafiKg: 1.625 },
-  rice:     { en: 'Rice',          ar: 'أرز',  emoji: '🍚', majorityKg: 2.30, hanafiKg: 2.50  },
-  flour:    { en: 'Flour (wheat)', ar: 'دقيق', emoji: '🌾', majorityKg: 1.40, hanafiKg: 1.625 },
-  semolina: { en: 'Semolina',      ar: 'سميد', emoji: '🌾', majorityKg: 2.50, hanafiKg: 2.50  },
-  sorghum:  { en: 'Sorghum',       ar: 'ذرة',  emoji: '🌾', majorityKg: 2.30, hanafiKg: 2.30  },
-  millet:   { en: 'Millet',        ar: 'دخن',  emoji: '🌾', majorityKg: 2.20, hanafiKg: 2.20  },
-  aqit:     { en: 'Dried Cheese',  ar: 'أقط',  emoji: '🧀', majorityKg: 2.05, hanafiKg: 2.05  },
+  wheat: {
+    en: 'Wheat', ar: 'قمح', emoji: '🌾', majorityKg: 2.04, hanafiKg: 1.625,
+    source_en: 'From hadith · Abu Saʿid al-Khudri',
+    source_ar: 'من الحديث · أبو سعيد الخدري',
+    dispute: null,
+  },
+  barley: {
+    en: 'Barley', ar: 'شعير', emoji: '🌾', majorityKg: 2.30, hanafiKg: 3.25,
+    source_en: 'From hadith · Abu Saʿid al-Khudri',
+    source_ar: 'من الحديث · أبو سعيد الخدري',
+    dispute: null,
+  },
+  dates: {
+    en: 'Dates', ar: 'تمر', emoji: '🌴', majorityKg: 1.80, hanafiKg: 3.25,
+    source_en: 'From hadith · Abu Saʿid al-Khudri',
+    source_ar: 'من الحديث · أبو سعيد الخدري',
+    dispute: null,
+  },
+  raisins: {
+    en: 'Raisins', ar: 'زبيب', emoji: '🍇', majorityKg: 1.64, hanafiKg: 1.625,
+    source_en: 'From hadith · Abu Saʿid al-Khudri',
+    source_ar: 'من الحديث · أبو سعيد الخدري',
+    dispute: null,
+  },
+  rice: {
+    en: 'Rice', ar: 'أرز', emoji: '🍚', majorityKg: 2.30, hanafiKg: 2.50,
+    source_en: 'Local staple principle · غالب قوت البلد',
+    source_ar: 'مبدأ غالب قوت البلد',
+    dispute: null,
+  },
+  flour: {
+    en: 'Flour (wheat)', ar: 'دقيق', emoji: '🌾', majorityKg: 1.40, hanafiKg: 1.625,
+    source_en: 'Valid per Hanafi & Hanbali; disputed per Shafi\'i',
+    source_ar: 'جائز عند الحنفية والحنابلة؛ مختلف فيه عند الشافعية',
+    dispute: {
+      note_en: 'Not valid per Shafi\'i school',
+      note_ar: 'غير جائز عند الشافعية',
+    },
+  },
+  semolina: {
+    en: 'Semolina', ar: 'سميد', emoji: '🌾', majorityKg: 2.50, hanafiKg: 2.50,
+    source_en: 'Local staple principle · غالب قوت البلد',
+    source_ar: 'مبدأ غالب قوت البلد',
+    dispute: null,
+  },
+  sorghum: {
+    en: 'Sorghum', ar: 'ذرة', emoji: '🌾', majorityKg: 2.30, hanafiKg: 2.30,
+    source_en: 'Local staple principle · غالب قوت البلد',
+    source_ar: 'مبدأ غالب قوت البلد',
+    dispute: null,
+  },
+  millet: {
+    en: 'Millet', ar: 'دخن', emoji: '🌾', majorityKg: 2.20, hanafiKg: 2.20,
+    source_en: 'Local staple principle · Maliki nine-food list',
+    source_ar: 'الأصناف التسعة عند المالكية · غالب قوت البلد',
+    dispute: null,
+  },
+  aqit: {
+    en: 'Dried Cheese', ar: 'أقط', emoji: '🧀', majorityKg: 2.05, hanafiKg: 2.05,
+    source_en: 'From hadith · Abu Saʿid al-Khudri',
+    source_ar: 'من الحديث · أبو سعيد الخدري',
+    dispute: null,
+  },
 };
 
 const COUNTRIES = [
